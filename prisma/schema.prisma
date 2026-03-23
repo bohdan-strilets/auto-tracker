@@ -1,0 +1,636 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User enums
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum RegistrationSource {
+  EMAIL
+  GOOGLE
+  APPLE
+}
+
+enum Currency {
+  EUR
+  USD
+  UAH
+  PLN
+}
+
+enum DistanceUnit {
+  KM
+  MI
+}
+
+enum FuelUnit {
+  LITER
+  GALLON
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Language {
+  UKR
+  POL
+  ENG
+}
+
+enum DateFormat {
+  DD_MM_YYYY
+  MM_DD_YYYY
+  YYYY_MM_DD
+}
+
+enum Provider {
+  GOOGLE
+  APPLE
+}
+
+enum ServiceStationType {
+  MECHANIC
+  TIRE_SHOP
+  CAR_WASH
+  FUEL_STATION
+  DEALERSHIP
+  OTHER
+}
+
+// Workspace enums
+
+enum WorkspaceType {
+  PERSONAL
+  FAMILY
+  BUSINESS
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+// Vehicle enums
+
+enum FuelType {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+  LPG
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+  ROBOTIC
+}
+
+enum DriveType {
+  FWD
+  RWD
+  AWD
+}
+
+enum TireType {
+  ALL_SEASON
+  SUMMER
+  WINTER
+}
+
+enum MileageSource {
+  PURCHASE
+  FUEL
+  SERVICE
+  TRIP
+  MANUAL
+}
+
+enum TimelineEventType {
+  PURCHASE
+  SALE
+  FUEL
+  SERVICE
+  DOCUMENT
+  EXPENSE
+  TIRE_CHANGE
+  TRIP
+}
+
+enum ServiceCategory {
+  MAINTENANCE
+  REPAIR
+  ACCESSORIES
+  CARE
+  OTHER
+}
+
+enum DocumentType {
+  INSURANCE_OC
+  INSURANCE_AC
+  TECHNICAL_INSPECTION
+  LOAN
+  LEASING
+  FINE
+  OTHER
+}
+
+enum ExpenseCategory {
+  FUEL
+  SERVICE
+  DOCUMENT
+  TIRES
+  OTHER
+}
+
+enum ReminderType {
+  INSURANCE
+  TECHNICAL_INSPECTION
+  OIL_CHANGE
+  FILTER_CHANGE
+  TIRE_CHANGE
+  CUSTOM
+}
+
+enum MaintenanceIntervalsType {
+  OIL_CHANGE
+  BRAKE_PADS
+  BRAKE_DISCS
+  TIMING_BELT
+  AIR_FILTER
+  FUEL_FILTER
+  CABIN_FILTER
+  SPARK_PLUGS
+  COOLANT
+  TRANSMISSION_OIL
+  CUSTOM
+}
+
+// Media enums
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+enum MediaVariantType {
+  THUMBNAIL
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum EntityType {
+  USER_AVATAR
+  USER_COVER
+  CAR_GALLERY
+  DOCUMENT_FILE
+  RECEIPT_IMAGE
+}
+
+// User
+
+model User {
+  id                      String                   @id @default(uuid())
+  email                   String                   @unique
+  emailVerified           Boolean?                 @default(false)
+  emailVerifiedAt         DateTime?
+  firstName               String
+  lastName                String
+  status                  UserStatus               @default(ACTIVE)
+  lastLoginAt             DateTime                 @default(now())
+  loginCount              Int                      @default(0)
+  registrationSource      RegistrationSource
+  locale                  String
+  timezone                String
+  settings                UserSettings?
+  emailVerificationTokens EmailVerificationToken[]
+  emailChangeTokens       EmailChangeToken[]
+  passwordResetTokens     PasswordResetToken[]
+  authCredentials         AuthCredentials?
+  oAuthAccounts           OAuthAccount[]
+  workspaceMembers        WorkspaceMember[]
+  uploadedMedia           Media[]
+  invites                 Invite[]
+  serviceStations         ServiceStation[]
+  favoriteStations        FavoriteStation[]
+  deletedAt               DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+}
+
+model UserSettings {
+  id                 String       @id @default(uuid())
+  userId             String       @unique
+  user               User         @relation(fields: [userId], references: [id])
+  currency           Currency     @default(PLN)
+  language           Language     @default(POL)
+  distanceUnit       DistanceUnit @default(KM)
+  fuelUnit           FuelUnit     @default(LITER)
+  theme              Theme        @default(SYSTEM)
+  dateFormat         DateFormat   @default(DD_MM_YYYY)
+  notificationsEmail Boolean      @default(false)
+  notificationsPush  Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  email     String    @unique
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model EmailChangeToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  newEmail  String    @unique
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model AuthCredentials {
+  id                    String    @id @default(uuid())
+  userId                String    @unique
+  user                  User      @relation(fields: [userId], references: [id])
+  passwordHash          String
+  passwordChangedAt     DateTime?
+  passwordResetRequired Boolean
+  failedLoginAttempts   Int       @default(0)
+  lockedUntil           DateTime?
+  lastFailedLoginAt     DateTime?
+  createdAt             DateTime  @default(now())
+}
+
+model OAuthAccount {
+  id                   String   @id @default(uuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
+  provider             Provider
+  providerUserId       String   @unique
+  email                String?
+  providerAccessToken  String?
+  providerRefreshToken String?
+  createdAt            DateTime @default(now())
+}
+
+model ServiceStation {
+  id               String             @id @default(uuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id])
+  name             String
+  type             ServiceStationType
+  address          String?
+  latitude         Decimal?
+  longitude        Decimal?
+  phone            String?
+  website          String?
+  notes            String?
+  favoriteStations FavoriteStation[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model FavoriteStation {
+  id               String         @id @default(uuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id])
+  serviceStationId String
+  station          ServiceStation @relation(fields: [serviceStationId], references: [id])
+  createdAt        DateTime       @default(now())
+
+  @@unique([userId, serviceStationId])
+}
+
+// Workspace
+
+model Workspace {
+  id               String            @id @default(uuid())
+  name             String
+  type             WorkspaceType     @default(PERSONAL)
+  workspaceMembers WorkspaceMember[]
+  invites          Invite[]
+  createdAt        DateTime          @default(now())
+  vehicles         Vehicle[]
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid())
+  workspaceId String
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  role        WorkspaceRole @default(OWNER)
+  createdAt   DateTime      @default(now())
+
+  @@unique([workspaceId, userId])
+}
+
+model Invite {
+  id          String       @id @default(uuid())
+  invitedById String
+  invitedBy   User         @relation(fields: [invitedById], references: [id])
+  workspaceId String
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  email       String
+  status      InviteStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+
+  @@unique([workspaceId, email])
+}
+
+// Vehicle
+
+model Vehicle {
+  id                   String                 @id @default(uuid())
+  workspaceId          String
+  workspace            Workspace              @relation(fields: [workspaceId], references: [id])
+  brand                String
+  model                String
+  year                 Int
+  generation           String?
+  vin                  String?                @unique
+  plateNumber          String?                @unique
+  engineName           String?
+  fuelType             FuelType[]
+  transmission         Transmission
+  driveType            DriveType
+  color                String?
+  purchaseDate         DateTime?
+  purchasePrice        Decimal?
+  purchaseMileage      Int?
+  saleDate             DateTime?
+  salePrice            Decimal?
+  saleMileage          Int?
+  currentMileage       Int? // update after every event with millage
+  description          String?
+  specs                VehicleSpecs?
+  tires                Tire[]
+  mileageLogs          MileageLog[]
+  timelineEvents       TimelineEvent[]
+  reminders            Reminder[]
+  maintenanceIntervals MaintenanceIntervals[]
+  galleries            Gallery[]
+  deletedAt            DateTime?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+}
+
+model VehicleSpecs {
+  id                  String   @id @default(uuid())
+  vehicleId           String   @unique
+  vehicle             Vehicle  @relation(fields: [vehicleId], references: [id])
+  engineCode          String?
+  enginePowerHp       Int?
+  enginePowerKw       Int?
+  torqueNm            Int?
+  fuelTankCapacity    Decimal?
+  cityConsumption     Decimal?
+  highwayConsumption  Decimal?
+  combinedConsumption Decimal?
+  lengthMm            Int?
+  widthMm             Int?
+  heightMm            Int?
+  weightKg            Int?
+}
+
+model TimelineEvent {
+  id          String            @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle           @relation(fields: [vehicleId], references: [id])
+  type        TimelineEventType
+  title       String
+  description String?
+  eventDate   DateTime
+  mileage     Int?
+  cost        Decimal?
+  currency    Currency?
+  fuelLogs    FuelLog?
+  serviceLogs ServiceLog?
+  documents   Document?
+  expenses    Expense?
+  tireChanges TireChange?
+  trips       Trip?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model FuelLog {
+  id             String        @id @default(uuid())
+  eventId        String        @unique
+  event          TimelineEvent @relation(fields: [eventId], references: [id])
+  liters         Decimal
+  pricePerLiter  Decimal
+  fuelType       FuelType
+  stationName    String?
+  stationAddress String?
+  notes          String?
+  createdAt      DateTime      @default(now())
+}
+
+model ServiceLog {
+  id          String          @id @default(uuid())
+  eventId     String          @unique
+  event       TimelineEvent   @relation(fields: [eventId], references: [id])
+  category    ServiceCategory
+  description String
+  createdAt   DateTime        @default(now())
+}
+
+model MaintenanceIntervals {
+  id                 String                   @id @default(uuid())
+  vehicleId          String
+  vehicle            Vehicle                  @relation(fields: [vehicleId], references: [id])
+  type               MaintenanceIntervalsType
+  title              String
+  intervalKm         Int?
+  intervalMonths     Int?
+  lastServiceMileage Int?
+  lastServiceDate    DateTime?
+  nextServiceMileage Int?
+  nextServiceDate    DateTime?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+}
+
+model Document {
+  id         String        @id @default(uuid())
+  eventId    String        @unique
+  event      TimelineEvent @relation(fields: [eventId], references: [id])
+  type       DocumentType
+  issueDate  DateTime?
+  expireDate DateTime?
+  notes      String?
+  createdAt  DateTime      @default(now())
+}
+
+model Expense {
+  id        String          @id @default(uuid())
+  eventId   String          @unique
+  event     TimelineEvent   @relation(fields: [eventId], references: [id])
+  category  ExpenseCategory
+  notes     String?
+  createdAt DateTime        @default(now())
+}
+
+model Tire {
+  id           String       @id @default(uuid())
+  vehicleId    String
+  vehicle      Vehicle      @relation(fields: [vehicleId], references: [id])
+  brand        String
+  model        String
+  type         TireType
+  width        Int?
+  aspectRatio  Int?
+  rimDiameter  Int?
+  price        Decimal?
+  notes        String?
+  purchaseDate DateTime?
+  tireChanges  TireChange[]
+  createdAt    DateTime     @default(now())
+}
+
+model TireChange {
+  id               String        @id @default(uuid())
+  eventId          String        @unique
+  event            TimelineEvent @relation(fields: [eventId], references: [id])
+  tireId           String
+  tire             Tire          @relation(fields: [tireId], references: [id])
+  installedDate    DateTime
+  removedDate      DateTime?
+  installedMileage Int
+  removedMileage   Int?
+  createdAt        DateTime      @default(now())
+}
+
+model Trip {
+  id           String        @id @default(uuid())
+  eventId      String        @unique
+  event        TimelineEvent @relation(fields: [eventId], references: [id])
+  startMileage Int
+  endMileage   Int
+  distanceKm   Decimal
+  fuelUsed     Decimal
+  notes        String?
+  createdAt    DateTime      @default(now())
+}
+
+model MileageLog {
+  id        String        @id @default(uuid())
+  vehicleId String
+  vehicle   Vehicle       @relation(fields: [vehicleId], references: [id])
+  eventId   String?
+  mileage   Int
+  source    MileageSource
+  createdAt DateTime      @default(now())
+}
+
+model Reminder {
+  id          String       @id @default(uuid())
+  vehicleId   String
+  vehicle     Vehicle      @relation(fields: [vehicleId], references: [id])
+  type        ReminderType
+  title       String
+  description String?
+  dueDate     DateTime?
+  dueMileage  Int?
+  isCompleted Boolean      @default(false)
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Gallery {
+  id        String   @id @default(uuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  mediaId   String
+  media     Media    @relation(fields: [mediaId], references: [id])
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Media
+
+model Media {
+  id              String         @id @default(uuid())
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  type            MediaType
+  mimeType        String
+  originalName    String
+  storageKey      String
+  sizeBytes       Int
+  width           Int?
+  height          Int?
+  durationSeconds Int?
+  isPublic        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  mediaVariants   MediaVariant[]
+  mediaUsages     MediaUsage[]
+  galleries       Gallery[] // need for Prisma relation
+}
+
+model MediaVariant {
+  id         String           @id @default(uuid())
+  mediaId    String
+  media      Media            @relation(fields: [mediaId], references: [id])
+  type       MediaVariantType
+  storageKey String
+  width      Int
+  height     Int
+  sizeBytes  Int
+  createdAt  DateTime         @default(now())
+}
+
+model MediaUsage {
+  id         String     @id @default(uuid())
+  mediaId    String
+  media      Media      @relation(fields: [mediaId], references: [id])
+  entityType EntityType
+  entityId   String
+  createdAt  DateTime   @default(now())
+
+  @@unique([mediaId, entityType, entityId])
+}
