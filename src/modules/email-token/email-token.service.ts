@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EmailChangeToken, EmailVerificationToken, PasswordResetToken } from '@prisma/client';
 
 import { TokenService } from '@common/crypto/services';
 import { normalizeEmail } from '@common/email';
+import {
+  TokenAlreadyUsedException,
+  TokenExpiredException,
+  TokenNotFoundException,
+} from '@common/exceptions';
 
 import { ConfigService } from '@config/config.service';
 
@@ -43,15 +48,11 @@ export class EmailTokenService {
   private validateToken(
     token: EmailVerificationToken | EmailChangeToken | PasswordResetToken | null,
   ): asserts token is EmailVerificationToken | EmailChangeToken | PasswordResetToken {
-    if (!token) {
-      throw new NotFoundException('Token not found');
-    }
-    if (this.tokenService.isUsed(token.usedAt)) {
-      throw new UnprocessableEntityException('Token already used');
-    }
-    if (this.tokenService.isExpired(token.expiresAt)) {
-      throw new UnprocessableEntityException('Token expired');
-    }
+    if (!token) throw new TokenNotFoundException();
+
+    if (this.tokenService.isUsed(token.usedAt)) throw new TokenAlreadyUsedException();
+
+    if (this.tokenService.isExpired(token.expiresAt)) throw new TokenExpiredException();
   }
 
   // ─── Email Verification ──────────────────────────────────────────────

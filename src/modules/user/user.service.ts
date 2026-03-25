@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@db/prisma.service';
 import { User, UserSettings } from '@prisma/client';
 
 import { normalizeEmail } from '@common/email';
+import { UserNotFoundException } from '@common/exceptions';
 
 import { UserRepository, UserSettingsRepository } from './repositories';
 import { CreateUserInput, UpdateUserSettingsInput } from './types';
@@ -30,7 +31,7 @@ export class UserService {
     const normalizedEmail = normalizeEmail(email);
     const user = await this.userRepository.findByEmail(normalizedEmail);
 
-    if (!user) throw new NotFoundException();
+    if (!user) throw new UserNotFoundException();
     return user;
   }
 
@@ -41,7 +42,7 @@ export class UserService {
   async getById(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
 
-    if (!user) throw new NotFoundException();
+    if (!user) throw new UserNotFoundException();
     return user;
   }
 
