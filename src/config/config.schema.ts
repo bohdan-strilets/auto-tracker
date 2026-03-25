@@ -22,4 +22,8 @@ export const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(30),
   JWT_ACCESS_EXPIRES_MINUTES: z.coerce.number().min(5),
   JWT_REFRESH_EXPIRES_DAYS: z.coerce.number().min(1),
+
+  RESEND_API_KEY: z.string().min(30),
+  MAIL_FROM_EMAIL: z.email(),
+  APP_URL: z.url(),
 });

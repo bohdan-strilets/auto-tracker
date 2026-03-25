@@ -12,6 +12,7 @@
     "baseUrl": "./",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "jsx": "react-jsx",
     "paths": {
       "@modules/*": ["src/modules/*"],
       "@common/*": ["src/common/*"],

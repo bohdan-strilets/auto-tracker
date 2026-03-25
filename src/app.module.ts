@@ -6,6 +6,7 @@ import { OAuthModule } from '@modules/oauth/oauth.module';
 import { SessionModule } from '@modules/session/session.module';
 
 import { CryptoModule } from '@common/crypto/crypto.module';
+import { MailModule } from '@common/mail/mail.module';
 
 import { ConfigModule } from '@config/config.module';
 
@@ -22,6 +23,7 @@ import { UserModule } from './modules/user/user.module';
     OAuthModule,
     EmailTokenModule,
     SessionModule,
+    MailModule,
   ],
 })
 export class AppModule {}

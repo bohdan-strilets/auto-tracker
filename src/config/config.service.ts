@@ -70,4 +70,15 @@ export class ConfigService {
   get jwtRefreshExpiresDays(): number {
     return this.env.JWT_REFRESH_EXPIRES_DAYS;
   }
+
+  // Resend
+  get resendApiKey(): string {
+    return this.env.RESEND_API_KEY;
+  }
+  get mailFromEmail(): string {
+    return this.env.MAIL_FROM_EMAIL;
+  }
+  get appUrl(): string {
+    return this.env.APP_URL;
+  }
 }
