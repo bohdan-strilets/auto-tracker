@@ -17,4 +17,9 @@ export const envSchema = z.object({
   TOKEN_EMAIL_VERIFY_EXPIRES_MINUTES: z.coerce.number().min(1).default(60),
   TOKEN_EMAIL_CHANGE_EXPIRES_MINUTES: z.coerce.number().min(1).default(60),
   TOKEN_PASSWORD_RESET_EXPIRES_MINUTES: z.coerce.number().min(1).default(15),
+
+  JWT_ACCESS_SECRET: z.string().min(30),
+  JWT_REFRESH_SECRET: z.string().min(30),
+  JWT_ACCESS_EXPIRES_MINUTES: z.coerce.number().min(5),
+  JWT_REFRESH_EXPIRES_DAYS: z.coerce.number().min(1),
 });

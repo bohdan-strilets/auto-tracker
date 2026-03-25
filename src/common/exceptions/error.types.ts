@@ -5,7 +5,8 @@ export type ErrorCode =
   | (typeof ERROR_CODES.user)[keyof typeof ERROR_CODES.user]
   | (typeof ERROR_CODES.auth)[keyof typeof ERROR_CODES.auth]
   | (typeof ERROR_CODES.token)[keyof typeof ERROR_CODES.token]
-  | (typeof ERROR_CODES.oauth)[keyof typeof ERROR_CODES.oauth];
+  | (typeof ERROR_CODES.oauth)[keyof typeof ERROR_CODES.oauth]
+  | (typeof ERROR_CODES.session)[keyof typeof ERROR_CODES.session];
 
 export type ErrorDetail = {
   field: string;

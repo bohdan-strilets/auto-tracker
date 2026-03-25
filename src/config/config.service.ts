@@ -56,4 +56,18 @@ export class ConfigService {
   get tokenPasswordResetExpiresMinutes(): number {
     return this.env.TOKEN_PASSWORD_RESET_EXPIRES_MINUTES;
   }
+
+  // JWT
+  get jwtAccessSecret(): string {
+    return this.env.JWT_ACCESS_SECRET;
+  }
+  get jwtRefreshSecret(): string {
+    return this.env.JWT_REFRESH_SECRET;
+  }
+  get jwtAccessExpiresMinutes(): number {
+    return this.env.JWT_ACCESS_EXPIRES_MINUTES;
+  }
+  get jwtRefreshExpiresDays(): number {
+    return this.env.JWT_REFRESH_EXPIRES_DAYS;
+  }
 }

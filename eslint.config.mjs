@@ -77,10 +77,11 @@ export default defineConfig([
   },
 
   {
-    files: ['**/crypto.service.ts', '**/auth/**'],
+    files: ['**/crypto.service.ts', '**/jwt-token.service.ts', '**/auth/**'],
     rules: {
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
 
