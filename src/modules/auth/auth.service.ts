@@ -169,6 +169,18 @@ export class AuthService {
     await this.sessionService.revoke(payload.sid);
   }
 
+  async logoutAll(rawRefreshToken: string): Promise<void> {
+    let payload: RefreshTokenPayload;
+
+    try {
+      payload = this.jwtTokenService.verifyRefreshToken(rawRefreshToken);
+    } catch {
+      return;
+    }
+
+    await this.sessionService.revokeAll(payload.sub);
+  }
+
   async resendVerificationEmail(email: string): Promise<void> {
     const user = await this.userService.findByEmail(email);
 
