@@ -86,6 +86,12 @@ export class TokenAlreadyUsedException extends AppException {
   }
 }
 
+export class UnauthorizedException extends AppException {
+  constructor() {
+    super(HttpStatus.UNAUTHORIZED, ERROR_CODES.auth.UNAUTHORIZED);
+  }
+}
+
 // OAuth
 export class OAuthAccountNotFoundException extends AppException {
   constructor() {
