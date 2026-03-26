@@ -6,7 +6,13 @@ import { CookieService } from '@common/cookie/cookie.service';
 import { DeviceService } from '@common/device/device.service';
 
 import { AuthService } from './auth.service';
-import { AuthResponseDto, LoginDto, ResendVerificationDto, VerifyEmailDto } from './dto';
+import {
+  AuthResponseDto,
+  LoginDto,
+  RefreshResponseDto,
+  ResendVerificationDto,
+  VerifyEmailDto,
+} from './dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
@@ -75,5 +81,21 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async verifyEmail(@Body() dto: VerifyEmailDto): Promise<void> {
     await this.authService.verifyEmail(dto.token);
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<RefreshResponseDto> {
+    const refreshToken = this.cookieService.getRefreshToken(req);
+
+    const response = await this.authService.refresh(refreshToken);
+    const { accessToken, refreshToken: newRefreshToken, refreshTokenExpiresAt } = response;
+
+    this.cookieService.setRefreshToken(res, newRefreshToken, refreshTokenExpiresAt);
+
+    return { accessToken };
   }
 }

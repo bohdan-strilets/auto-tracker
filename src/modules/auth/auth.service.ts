@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { PrismaService } from '@db/prisma.service';
 import { RegistrationSource, UserStatus } from '@prisma/client';
@@ -7,7 +7,11 @@ import { AuthCredentialsService } from '@modules/auth-credentials/auth-credentia
 import { EmailTokenService } from '@modules/email-token/email-token.service';
 import { JwtTokenService } from '@modules/session/services';
 import { SessionService } from '@modules/session/services/session.service';
-import { AccessTokenPayload, RefreshTokenPayload } from '@modules/session/types';
+import {
+  AccessTokenPayload,
+  RefreshTokenPayload,
+  RefreshTokenResponse,
+} from '@modules/session/types';
 import { CreateUserInput } from '@modules/user/types';
 import { toUserResponseDto } from '@modules/user/user.mapper';
 import { UserService } from '@modules/user/user.service';
@@ -201,5 +205,10 @@ export class AuthService {
 
     const user = await this.userService.getById(token.userId);
     await this.mailService.sendWelcomeEmail(user.email, user.firstName);
+  }
+
+  async refresh(rawRefreshToken: string | null): Promise<RefreshTokenResponse> {
+    if (!rawRefreshToken) throw new UnauthorizedException();
+    return this.sessionService.refresh(rawRefreshToken);
   }
 }

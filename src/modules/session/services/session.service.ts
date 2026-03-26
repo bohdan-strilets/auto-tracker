@@ -91,7 +91,11 @@ export class SessionService {
       email: user.email,
     });
 
-    return { accessToken, refreshToken: newRefreshToken };
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+      refreshTokenExpiresAt: newExpiresAt,
+    };
   }
 
   async updateLastActivity(sessionId: string): Promise<void> {
