@@ -85,6 +85,14 @@ export class EmailTokenService {
     return token;
   }
 
+  async resendEmailVerificationToken(
+    userId: string,
+    email: string,
+  ): Promise<{ rawToken: string; record: EmailVerificationToken }> {
+    await this.emailVerifyTokenRepository.deleteAllByUserId(userId);
+    return this.createEmailVerificationToken(userId, email);
+  }
+
   // ─── Email Change ────────────────────────────────────────────────────
 
   async createEmailChangeToken(userId: string, newEmail: string): Promise<EmailChangeOutput> {

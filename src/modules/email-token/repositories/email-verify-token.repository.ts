@@ -26,4 +26,10 @@ export class EmailVerifyTokenRepository {
       data: { usedAt: now },
     });
   }
+
+  async deleteAllByUserId(userId: string): Promise<void> {
+    await this.prisma.emailVerificationToken.deleteMany({
+      where: { userId },
+    });
+  }
 }
