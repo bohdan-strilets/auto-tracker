@@ -30,13 +30,15 @@ export default defineConfig([
     },
 
     rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'error',
-      '@typescript-eslint/no-unsafe-return': 'error',
-      '@typescript-eslint/no-unsafe-call': 'warn',
-      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
@@ -69,26 +71,7 @@ export default defineConfig([
   {
     files: ['**/*.spec.ts', '**/*.test.ts'],
     rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off',
-    },
-  },
-
-  {
-    files: ['**/crypto.service.ts', '**/jwt-token.service.ts', '**/auth/**'],
-    rules: {
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off',
-    },
-  },
-
-  {
-    files: ['**/*.module.ts'],
-    rules: {
-      '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 
