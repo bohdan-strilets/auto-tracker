@@ -5,7 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserService } from '@modules/user/user.service';
 
-import { SessionExpiredException, SessionNotFoundException } from '@common/exceptions';
+import {
+  SessionExpiredException,
+  SessionInvalidException,
+  SessionNotFoundException,
+} from '@common/exceptions';
 
 import { SessionRepository } from '../session.repository';
 import {
@@ -112,6 +116,15 @@ export class SessionService {
 
   async revokeAllExcept(userId: string, sessionId: string): Promise<void> {
     await this.sessionRepository.revokeAllExcept(userId, sessionId);
+  }
+
+  async revokeById(sessionId: string, userId: string, currentSessionId: string): Promise<void> {
+    const session = await this.getById(sessionId);
+
+    if (session.userId !== userId) throw new SessionNotFoundException();
+    if (sessionId === currentSessionId) throw new SessionInvalidException();
+
+    await this.sessionRepository.revoke(sessionId);
   }
 
   generateSessionId(): string {
