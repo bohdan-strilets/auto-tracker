@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Session } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 
 import { UserService } from '@modules/user/user.service';
 
@@ -9,7 +10,7 @@ import { SessionExpiredException, SessionNotFoundException } from '@common/excep
 import { SessionRepository } from '../session.repository';
 import {
   AccessTokenPayload,
-  CreateSessionInput,
+  CreateSessionInputWithoutSensitiveData,
   RefreshTokenResponse,
   SessionResponse,
 } from '../types';
@@ -25,12 +26,12 @@ export class SessionService {
   ) {}
 
   async create(
-    input: Omit<CreateSessionInput, 'refreshTokenHash' | 'expiresAt'>,
-    jwtPayload: AccessTokenPayload,
+    input: CreateSessionInputWithoutSensitiveData,
+    accessTokenPayload: AccessTokenPayload,
   ): Promise<SessionResponse> {
     const refreshToken = this.jwtTokenService.generateRefreshToken({
-      sub: jwtPayload.sub,
-      sid: jwtPayload.sid,
+      sub: accessTokenPayload.sub,
+      sid: accessTokenPayload.sid,
     });
 
     const refreshTokenHash = this.jwtTokenService.hashRefreshToken(refreshToken);
@@ -42,7 +43,7 @@ export class SessionService {
       expiresAt,
     });
 
-    const accessToken = this.jwtTokenService.generateAccessToken(jwtPayload);
+    const accessToken = this.jwtTokenService.generateAccessToken(accessTokenPayload);
 
     return { session, accessToken, refreshToken };
   }
@@ -103,5 +104,9 @@ export class SessionService {
 
   async revokeAll(userId: string): Promise<number> {
     return this.sessionRepository.revokeAll(userId);
+  }
+
+  generateSessionId(): string {
+    return uuidv4();
   }
 }
