@@ -49,6 +49,12 @@ enum Language {
   ENG
 }
 
+enum Locale {
+  UK_UA
+  EN_US
+  PL_PL
+}
+
 enum DateFormat {
   DD_MM_YYYY
   MM_DD_YYYY
@@ -239,7 +245,7 @@ model User {
   lastLoginAt             DateTime                 @default(now())
   loginCount              Int                      @default(0)
   registrationSource      RegistrationSource
-  locale                  String
+  locale                  Locale                   @default(PL_PL)
   timezone                String
   settings                UserSettings?
   emailVerificationTokens EmailVerificationToken[]
