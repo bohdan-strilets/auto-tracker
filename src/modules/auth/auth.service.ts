@@ -168,4 +168,12 @@ export class AuthService {
 
     await this.mailService.sendVerificationEmail(user.email, user.firstName, rawToken);
   }
+
+  async verifyEmail(rawToken: string): Promise<void> {
+    const token = await this.emailTokenService.useEmailVerificationToken(rawToken);
+    await this.userService.markEmailAsVerified(token.userId);
+
+    const user = await this.userService.getById(token.userId);
+    await this.mailService.sendWelcomeEmail(user.email, user.firstName);
+  }
 }

@@ -6,7 +6,7 @@ import { CookieService } from '@common/cookie/cookie.service';
 import { DeviceService } from '@common/device/device.service';
 
 import { AuthService } from './auth.service';
-import { AuthResponseDto, LoginDto, ResendVerificationDto } from './dto';
+import { AuthResponseDto, LoginDto, ResendVerificationDto, VerifyEmailDto } from './dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
@@ -53,5 +53,11 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendVerification(@Body() dto: ResendVerificationDto): Promise<void> {
     await this.authService.resendVerificationEmail(dto.email);
+  }
+
+  @Post('verify-email')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async verifyEmail(@Body() dto: VerifyEmailDto): Promise<void> {
+    await this.authService.verifyEmail(dto.token);
   }
 }
