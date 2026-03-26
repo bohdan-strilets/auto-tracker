@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AuthCredentials, Prisma } from '@prisma/client';
 
-import { minutesToMs } from '@common/date';
+import { minutesToMs } from '@common/utils';
 
 import { ConfigService } from '@config/config.service';
 

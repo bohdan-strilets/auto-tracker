@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 
 import { TokenService } from '@common/crypto/services';
-import { minutesToMs } from '@common/date';
-import { daysToMs } from '@common/date/to-ms';
+import { minutesToMs } from '@common/utils';
+import { daysToMs } from '@common/utils/to-ms';
 
 import { ConfigService } from '@config/config.service';
 

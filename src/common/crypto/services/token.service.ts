@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { minutesToMs } from '@common/date';
+import { minutesToMs } from '@common/utils';
 
 import { GenerateTokenResult } from '../types';
 

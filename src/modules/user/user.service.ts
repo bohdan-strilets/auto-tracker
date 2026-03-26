@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, User, UserSettings, UserStatus } from '@prisma/client';
 
-import { normalizeEmail } from '@common/email';
 import { UserNotFoundException } from '@common/exceptions';
+import { normalizeEmail } from '@common/utils';
 
 import { UserRepository, UserSettingsRepository } from './repositories';
 import { CreateUserInput, UpdateUserSettingsInput } from './types';

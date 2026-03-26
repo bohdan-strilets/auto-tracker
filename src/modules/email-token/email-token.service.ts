@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { EmailChangeToken, EmailVerificationToken, PasswordResetToken } from '@prisma/client';
 
 import { TokenService } from '@common/crypto/services';
-import { normalizeEmail } from '@common/email';
 import {
   TokenAlreadyUsedException,
   TokenExpiredException,
   TokenNotFoundException,
 } from '@common/exceptions';
+import { normalizeEmail } from '@common/utils';
 
 import { ConfigService } from '@config/config.service';
 
