@@ -3,8 +3,21 @@ import { HttpStatus } from '@nestjs/common';
 import { AppException } from './app-exception';
 import { ERROR_CODES } from './error-codes';
 
-// User
+// General
 
+export class InternalServerErrorException extends AppException {
+  constructor() {
+    super(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_CODES.generic.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export class ValidationErrorException extends AppException {
+  constructor() {
+    super(HttpStatus.BAD_REQUEST, ERROR_CODES.generic.VALIDATION_ERROR);
+  }
+}
+
+// User
 export class UserNotFoundException extends AppException {
   constructor() {
     super(HttpStatus.NOT_FOUND, ERROR_CODES.user.USER_NOT_FOUND);
@@ -18,7 +31,6 @@ export class EmailAlreadyExistsException extends AppException {
 }
 
 // Auth
-
 export class InvalidCredentialsException extends AppException {
   constructor() {
     super(HttpStatus.UNAUTHORIZED, ERROR_CODES.auth.INVALID_CREDENTIALS);
@@ -49,8 +61,13 @@ export class PasswordResetRequiredException extends AppException {
   }
 }
 
-// Token
+export class WeakPasswordException extends AppException {
+  constructor() {
+    super(HttpStatus.UNPROCESSABLE_ENTITY, ERROR_CODES.auth.WEAK_PASSWORD);
+  }
+}
 
+// Token
 export class TokenNotFoundException extends AppException {
   constructor() {
     super(HttpStatus.NOT_FOUND, ERROR_CODES.token.TOKEN_NOT_FOUND);
@@ -70,7 +87,6 @@ export class TokenAlreadyUsedException extends AppException {
 }
 
 // OAuth
-
 export class OAuthAccountNotFoundException extends AppException {
   constructor() {
     super(HttpStatus.NOT_FOUND, ERROR_CODES.oauth.OAUTH_ACCOUNT_NOT_FOUND);
@@ -84,7 +100,6 @@ export class OAuthAccountAlreadyLinkedException extends AppException {
 }
 
 // Session
-
 export class SessionNotFoundException extends AppException {
   constructor() {
     super(HttpStatus.NOT_FOUND, ERROR_CODES.session.SESSION_NOT_FOUND);
