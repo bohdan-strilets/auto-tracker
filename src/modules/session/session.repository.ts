@@ -63,4 +63,16 @@ export class SessionRepository {
 
     return result.count;
   }
+
+  async revokeAllExcept(userId: string, sessionId: string): Promise<void> {
+    const now = new Date();
+    await this.prisma.session.updateMany({
+      where: {
+        userId,
+        status: SessionStatus.ACTIVE,
+        id: { not: sessionId },
+      },
+      data: { status: SessionStatus.REVOKED, revokedAt: now },
+    });
+  }
 }

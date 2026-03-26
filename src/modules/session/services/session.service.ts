@@ -110,6 +110,10 @@ export class SessionService {
     return this.sessionRepository.revokeAll(userId);
   }
 
+  async revokeAllExcept(userId: string, sessionId: string): Promise<void> {
+    await this.sessionRepository.revokeAllExcept(userId, sessionId);
+  }
+
   generateSessionId(): string {
     return uuidv4();
   }
