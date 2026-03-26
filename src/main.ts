@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import { GlobalExceptionFilter } from '@common/exceptions/filter';
 import { createValidationPipe } from '@common/pipes';
+import { setupSwagger } from '@common/swagger';
 
 import { ConfigService } from '@config/config.service';
 
@@ -18,6 +19,11 @@ async function bootstrap(): Promise<void> {
 
   const port = config.port;
   const nodeEnv = config.nodeEnv;
+  const isProduction = config.isProduction;
+
+  if (!isProduction) {
+    setupSwagger(app);
+  }
 
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalPipes(createValidationPipe());
