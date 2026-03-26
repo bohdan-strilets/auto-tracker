@@ -1,0 +1,41 @@
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+
+import { Request, Response } from 'express';
+
+import { CookieService } from '@common/cookie/cookie.service';
+import { DeviceService } from '@common/device/device.service';
+
+import { AuthService } from './auth.service';
+import { AuthResponseDto, ResendVerificationDto } from './dto';
+import { RegisterDto } from './dto/register.dto';
+
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly deviceService: DeviceService,
+    private readonly cookieService: CookieService,
+  ) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(
+    @Body() dto: RegisterDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const deviceContext = this.deviceService.extractFromRequest(req);
+    const response = await this.authService.register(dto, deviceContext);
+    const { accessToken, refreshToken, refreshTokenExpiresAt, user } = response;
+
+    this.cookieService.setRefreshToken(res, refreshToken, refreshTokenExpiresAt);
+
+    return { user, accessToken };
+  }
+
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async resendVerification(@Body() dto: ResendVerificationDto): Promise<void> {
+    await this.authService.resendVerificationEmail(dto.email);
+  }
+}
