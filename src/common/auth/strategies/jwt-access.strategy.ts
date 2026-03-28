@@ -9,6 +9,8 @@ import { UnauthorizedException } from '@common/exceptions';
 
 import { ConfigService } from '@config/config.service';
 
+import { AuthenticatedUser } from '../types';
+
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') {
   constructor(private readonly config: ConfigService) {
@@ -19,10 +21,14 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt-access') 
     });
   }
 
-  validate(payload: AccessTokenPayload): AccessTokenPayload {
+  validate(payload: AccessTokenPayload): AuthenticatedUser {
     if (!payload.sub || !payload.sid || !payload.email) {
       throw new UnauthorizedException();
     }
-    return payload;
+    return {
+      id: payload.sub,
+      sessionId: payload.sid,
+      email: payload.email,
+    };
   }
 }
