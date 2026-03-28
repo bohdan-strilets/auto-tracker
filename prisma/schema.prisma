@@ -412,15 +412,17 @@ model WorkspaceMember {
 }
 
 model Invite {
-  id          String       @id @default(uuid())
+  id          String        @id @default(uuid())
   invitedById String
-  invitedBy   User         @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedBy   User          @relation(fields: [invitedById], references: [id], onDelete: Cascade)
   workspaceId String
-  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  token       String        @unique @default(uuid())
+  role        WorkspaceRole @default(MEMBER)
   email       String
-  status      InviteStatus @default(PENDING)
+  status      InviteStatus  @default(PENDING)
   expiresAt   DateTime
-  createdAt   DateTime     @default(now())
+  createdAt   DateTime      @default(now())
 
   @@unique([workspaceId, email])
 }
