@@ -83,4 +83,10 @@ export class UserService {
   async updateSettings(userId: string, input: UpdateUserSettingsInput): Promise<UserSettings> {
     return this.userSettingsRepository.update(userId, input);
   }
+
+  async getFullName(userId: string): Promise<string> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new UserNotFoundException();
+    return `${user.firstName} ${user.lastName}`;
+  }
 }

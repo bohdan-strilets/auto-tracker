@@ -59,4 +59,16 @@ export class WorkspaceMemberRepository {
       where: { workspaceId, role: WorkspaceRole.OWNER },
     });
   }
+
+  async create(
+    workspaceId: string,
+    userId: string,
+    role: WorkspaceRole,
+    tx?: Prisma.TransactionClient,
+  ): Promise<WorkspaceMember> {
+    const client = tx ?? this.prisma;
+    return client.workspaceMember.create({
+      data: { workspaceId, userId, role },
+    });
+  }
 }

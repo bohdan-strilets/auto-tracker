@@ -5,6 +5,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { AuthModule } from '@modules/auth/auth.module';
 import { AuthCredentialsModule } from '@modules/auth-credentials/auth-credentials.module';
 import { EmailTokenModule } from '@modules/email-token/email-token.module';
+import { InviteModule } from '@modules/invite/invite.module';
 import { OAuthModule } from '@modules/oauth/oauth.module';
 import { SessionModule } from '@modules/session/session.module';
 import { WorkspaceModule } from '@modules/workspace/workspace.module';
@@ -38,6 +39,7 @@ import { UserModule } from './modules/user/user.module';
     AuthGuardModule,
     ThrottlerConfigModule,
     WorkspaceModule,
+    InviteModule,
   ],
   providers: [
     {

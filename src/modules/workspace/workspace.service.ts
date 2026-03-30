@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@db/prisma.service';
-import { Workspace, WorkspaceMember, WorkspaceRole } from '@prisma/client';
+import { Prisma, Workspace, WorkspaceMember, WorkspaceRole } from '@prisma/client';
 
 import {
   AdminCannotAssignOwnerException,
@@ -163,5 +163,30 @@ export class WorkspaceService {
     }
 
     return member;
+  }
+
+  async getWorkspaceName(workspaceId: string): Promise<string> {
+    const workspace = await this.workspaceRepository.findById(workspaceId);
+    if (!workspace) throw new WorkspaceNotFoundException();
+    return workspace.name;
+  }
+
+  async getMemberRole(workspaceId: string, userId: string): Promise<WorkspaceRole> {
+    const member = await this.workspaceMemberRepository.findMember(workspaceId, userId);
+    if (!member) throw new NotWorkspaceMemberException();
+    return member.role;
+  }
+
+  async addMember(
+    workspaceId: string,
+    userId: string,
+    role: WorkspaceRole,
+    tx?: Prisma.TransactionClient,
+  ): Promise<WorkspaceMember> {
+    return this.workspaceMemberRepository.create(workspaceId, userId, role, tx);
+  }
+
+  async findMember(workspaceId: string, userId: string): Promise<WorkspaceMember | null> {
+    return this.workspaceMemberRepository.findMember(workspaceId, userId);
   }
 }
