@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiNoContentResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -22,7 +23,7 @@ import {
   ApiUpdateVehicleResponse,
 } from '@common/swagger';
 
-import { CreateVehicleDto, UpdateVehicleDto } from '../dto';
+import { CreateVehicleDto, UpdateVehicleDto, VehicleQueryDto } from '../dto';
 import { VehicleService } from '../vehicle.service';
 
 @ApiTags('Vehicles')
@@ -43,8 +44,11 @@ export class VehicleController {
   @IsMember()
   @ApiOperation({ summary: 'List workspace vehicles' })
   @ApiGetVehiclesResponse()
-  findAll(@Param('workspaceId', ParseUUIDPipe) workspaceId: string) {
-    return this.vehicleService.findAll(workspaceId);
+  findAll(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Query() query: VehicleQueryDto,
+  ) {
+    return this.vehicleService.findAll(workspaceId, query);
   }
 
   @Get(':vehicleId')

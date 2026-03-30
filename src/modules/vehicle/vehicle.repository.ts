@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, Vehicle, VehicleSpecs } from '@prisma/client';
 
+import { VehicleQueryDto } from './dto';
+import { SortOrder, VehicleSortField } from './enums';
 import { vehicleListSelect } from './selects';
 import { VehicleListItem, VehicleWithSpecs } from './types';
 
@@ -39,14 +41,49 @@ export class VehicleRepository {
 
   async findAllByWorkspaceId(
     workspaceId: string,
+    query: VehicleQueryDto,
     tx?: Prisma.TransactionClient,
-  ): Promise<VehicleListItem[]> {
+  ): Promise<{ data: VehicleListItem[]; total: number }> {
     const client = tx ?? this.prisma;
-    return client.vehicle.findMany({
-      where: { workspaceId, deletedAt: null },
-      select: vehicleListSelect,
-      orderBy: { createdAt: 'desc' },
-    });
+
+    const {
+      page = 1,
+      limit = 20,
+      sortBy = VehicleSortField.CREATED_AT,
+      sortOrder = SortOrder.DESC,
+      brand,
+      model,
+      year,
+      fuelType,
+      transmission,
+      driveType,
+      color,
+    } = query;
+
+    const where: Prisma.VehicleWhereInput = {
+      workspaceId,
+      deletedAt: null,
+      ...(brand && { brand: { contains: brand, mode: 'insensitive' } }),
+      ...(model && { model: { contains: model, mode: 'insensitive' } }),
+      ...(year && { year }),
+      ...(fuelType?.length && { fuelType: { hasSome: fuelType } }),
+      ...(transmission && { transmission }),
+      ...(driveType && { driveType }),
+      ...(color && { color: { contains: color, mode: 'insensitive' } }),
+    };
+
+    const [data, total] = await client.$transaction([
+      client.vehicle.findMany({
+        where,
+        select: vehicleListSelect,
+        orderBy: { [sortBy]: sortOrder },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      client.vehicle.count({ where }),
+    ]);
+
+    return { data, total };
   }
 
   async update(

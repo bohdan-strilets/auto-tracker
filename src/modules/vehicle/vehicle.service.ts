@@ -4,8 +4,8 @@ import { Vehicle, VehicleSpecs } from '@prisma/client';
 
 import { VehicleNotFoundException } from '@common/exceptions';
 
-import { CreateVehicleDto, UpdateVehicleDto, UpdateVehicleSpecsDto } from './dto';
-import { VehicleListItem, VehicleWithSpecs } from './types';
+import { CreateVehicleDto, UpdateVehicleDto, UpdateVehicleSpecsDto, VehicleQueryDto } from './dto';
+import { VehicleWithSpecs } from './types';
 import { VehicleRepository } from './vehicle.repository';
 
 @Injectable()
@@ -18,8 +18,20 @@ export class VehicleService {
     return this.vehicleRepository.create(workspaceId, dto);
   }
 
-  async findAll(workspaceId: string): Promise<VehicleListItem[]> {
-    return this.vehicleRepository.findAllByWorkspaceId(workspaceId);
+  async findAll(workspaceId: string, query: VehicleQueryDto) {
+    const { data, total } = await this.vehicleRepository.findAllByWorkspaceId(workspaceId, query);
+
+    const { page = 1, limit = 20 } = query;
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getOne(vehicleId: string, workspaceId: string): Promise<VehicleWithSpecs> {
