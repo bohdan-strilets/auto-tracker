@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, Vehicle, VehicleSpecs } from '@prisma/client';
 
+import { SortOrder } from '@common/pagination';
+
 import { VehicleQueryDto } from './dto';
-import { SortOrder, VehicleSortField } from './enums';
+import { VehicleSortField } from './enums';
 import { vehicleListSelect } from './selects';
 import { VehicleListItem, VehicleWithSpecs } from './types';
 

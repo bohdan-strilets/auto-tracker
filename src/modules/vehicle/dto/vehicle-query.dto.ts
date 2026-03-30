@@ -2,28 +2,13 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { DriveType, FuelType, Transmission } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsArray, IsEnum, IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 
-import { SortOrder, VehicleSortField } from '../enums';
+import { PaginationDto, SortOrder } from '@common/pagination';
 
-export class VehicleQueryDto {
-  // ─── Pagination ───────────────────────────────────────────────────────────
+import { VehicleSortField } from '../enums';
 
-  @ApiPropertyOptional({ example: 1, default: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  declare page?: number;
-
-  @ApiPropertyOptional({ example: 20, default: 20 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  declare limit?: number;
-
+export class VehicleQueryDto extends PaginationDto {
   // ─── Sorting ──────────────────────────────────────────────────────────────
 
   @ApiPropertyOptional({ enum: VehicleSortField, default: VehicleSortField.CREATED_AT })

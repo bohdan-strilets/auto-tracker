@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Vehicle, VehicleSpecs } from '@prisma/client';
 
 import { VehicleNotFoundException } from '@common/exceptions';
+import { paginate } from '@common/pagination';
 
 import { CreateVehicleDto, UpdateVehicleDto, UpdateVehicleSpecsDto, VehicleQueryDto } from './dto';
 import { VehicleWithSpecs } from './types';
@@ -20,18 +21,7 @@ export class VehicleService {
 
   async findAll(workspaceId: string, query: VehicleQueryDto) {
     const { data, total } = await this.vehicleRepository.findAllByWorkspaceId(workspaceId, query);
-
-    const { page = 1, limit = 20 } = query;
-
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return paginate(data, total, query.page, query.limit);
   }
 
   async getOne(vehicleId: string, workspaceId: string): Promise<VehicleWithSpecs> {
