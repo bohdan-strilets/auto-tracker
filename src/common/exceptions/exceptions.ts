@@ -189,3 +189,10 @@ export class InviteExpiredException extends AppException {
     super(HttpStatus.UNPROCESSABLE_ENTITY, ERROR_CODES.invite.INVITE_EXPIRED);
   }
 }
+
+// Vehicle
+export class VehicleNotFoundException extends AppException {
+  constructor() {
+    super(HttpStatus.NOT_FOUND, ERROR_CODES.vehicle.VEHICLE_NOT_FOUND);
+  }
+}

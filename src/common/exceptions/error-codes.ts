@@ -53,4 +53,8 @@ export const ERROR_CODES = {
     INVITE_ALREADY_EXISTS: 'INVITE_ALREADY_EXISTS',
     INVITE_EXPIRED: 'INVITE_EXPIRED',
   },
+
+  vehicle: {
+    VEHICLE_NOT_FOUND: 'VEHICLE_NOT_FOUND',
+  },
 } as const;

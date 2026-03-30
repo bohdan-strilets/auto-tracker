@@ -8,6 +8,7 @@ import { EmailTokenModule } from '@modules/email-token/email-token.module';
 import { InviteModule } from '@modules/invite/invite.module';
 import { OAuthModule } from '@modules/oauth/oauth.module';
 import { SessionModule } from '@modules/session/session.module';
+import { VehicleModule } from '@modules/vehicle/vehicle.module';
 import { WorkspaceModule } from '@modules/workspace/workspace.module';
 
 import { AuthGuardModule } from '@common/auth/auth.module';
@@ -40,6 +41,7 @@ import { UserModule } from './modules/user/user.module';
     ThrottlerConfigModule,
     WorkspaceModule,
     InviteModule,
+    VehicleModule,
   ],
   providers: [
     {
