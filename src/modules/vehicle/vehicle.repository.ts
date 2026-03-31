@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, Vehicle, VehicleSpecs } from '@prisma/client';
 
-import { SortOrder } from '@common/pagination';
+import { PaginatedData, SortOrder } from '@common/pagination';
 
 import { VehicleQueryDto } from './dto';
 import { VehicleSortField } from './enums';
@@ -14,38 +14,43 @@ import { VehicleListItem, VehicleWithSpecs } from './types';
 export class VehicleRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  // ─── Vehicles ─────────────────────────────────────────────────────────────
+
   async create(
     workspaceId: string,
     data: Prisma.VehicleCreateWithoutWorkspaceInput,
     tx?: Prisma.TransactionClient,
   ): Promise<Vehicle> {
     const client = tx ?? this.prisma;
-    return client.vehicle.create({
-      data: { ...data, workspaceId },
-    });
+    const input = { ...data, workspaceId };
+
+    return client.vehicle.create({ data: input });
   }
 
-  async findById(id: string, tx?: Prisma.TransactionClient): Promise<Vehicle | null> {
+  async findById(vehicleId: string, tx?: Prisma.TransactionClient): Promise<Vehicle | null> {
     const client = tx ?? this.prisma;
-    return client.vehicle.findUnique({ where: { id, deletedAt: null } });
+    const where = { id: vehicleId, deletedAt: null };
+
+    return client.vehicle.findUnique({ where });
   }
 
   async findByIdWithSpecs(
-    id: string,
+    vehicleId: string,
     tx?: Prisma.TransactionClient,
   ): Promise<VehicleWithSpecs | null> {
     const client = tx ?? this.prisma;
-    return client.vehicle.findUnique({
-      where: { id, deletedAt: null },
-      include: { specs: true },
-    });
+
+    const where = { id: vehicleId, deletedAt: null };
+    const include = { specs: true };
+
+    return client.vehicle.findUnique({ where, include });
   }
 
   async findAllByWorkspaceId(
     workspaceId: string,
     query: VehicleQueryDto,
     tx?: Prisma.TransactionClient,
-  ): Promise<{ data: VehicleListItem[]; total: number }> {
+  ): Promise<PaginatedData<VehicleListItem>> {
     const client = tx ?? this.prisma;
 
     const {
@@ -74,37 +79,40 @@ export class VehicleRepository {
       ...(color && { color: { contains: color, mode: 'insensitive' } }),
     };
 
-    const [data, total] = await client.$transaction([
+    const orderBy = { [sortBy]: sortOrder };
+    const skip = (page - 1) * limit;
+
+    const result = await client.$transaction([
       client.vehicle.findMany({
         where,
         select: vehicleListSelect,
-        orderBy: { [sortBy]: sortOrder },
-        skip: (page - 1) * limit,
+        orderBy,
+        skip,
         take: limit,
       }),
       client.vehicle.count({ where }),
     ]);
 
+    const [data, total] = result;
     return { data, total };
   }
 
   async update(
-    id: string,
+    vehicleId: string,
     data: Prisma.VehicleUpdateInput,
     tx?: Prisma.TransactionClient,
   ): Promise<Vehicle> {
     const client = tx ?? this.prisma;
-    return client.vehicle.update({ where: { id }, data });
+    return client.vehicle.update({ where: { id: vehicleId }, data });
   }
 
-  async softDelete(id: string, tx?: Prisma.TransactionClient): Promise<Vehicle> {
+  async softDelete(vehicleId: string, tx?: Prisma.TransactionClient): Promise<Vehicle> {
     const client = tx ?? this.prisma;
-    const now = new Date();
 
-    return client.vehicle.update({
-      where: { id },
-      data: { deletedAt: now },
-    });
+    const where = { id: vehicleId };
+    const data = { deletedAt: new Date() };
+
+    return client.vehicle.update({ where, data });
   }
 
   // ─── Specs ────────────────────────────────────────────────────────────────
@@ -115,6 +123,7 @@ export class VehicleRepository {
     tx?: Prisma.TransactionClient,
   ): Promise<VehicleSpecs> {
     const client = tx ?? this.prisma;
+
     return client.vehicleSpecs.upsert({
       where: { vehicleId },
       update: data,
