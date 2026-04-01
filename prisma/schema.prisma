@@ -146,8 +146,6 @@ enum TimelineEventType {
 enum ServiceCategory {
   MAINTENANCE
   REPAIR
-  ACCESSORIES
-  CARE
   OTHER
 }
 
@@ -162,10 +160,12 @@ enum DocumentType {
 }
 
 enum ExpenseCategory {
-  FUEL
-  SERVICE
-  DOCUMENT
-  TIRES
+  ACCESSORIES
+  CARE
+  PARKING
+  FINE
+  REGISTRATION
+  RENTAL
   OTHER
 }
 
