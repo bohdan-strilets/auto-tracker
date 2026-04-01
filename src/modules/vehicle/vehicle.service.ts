@@ -6,7 +6,7 @@ import { VehicleNotFoundException } from '@common/exceptions';
 import { paginate, PaginatedResult } from '@common/pagination';
 
 import { CreateVehicleDto, UpdateVehicleDto, UpdateVehicleSpecsDto, VehicleQueryDto } from './dto';
-import { PurchaseInput, VehicleListItem, VehicleWithSpecs } from './types';
+import { PurchaseInput, SaleInput, VehicleListItem, VehicleWithSpecs } from './types';
 import { VehicleRepository } from './vehicle.repository';
 
 @Injectable()
@@ -55,6 +55,14 @@ export class VehicleService {
   async updatePurchaseInfo(
     vehicleId: string,
     input: PurchaseInput,
+    tx: Prisma.TransactionClient,
+  ): Promise<void> {
+    await this.vehicleRepository.update(vehicleId, input, tx);
+  }
+
+  async updateSaleInfo(
+    vehicleId: string,
+    input: SaleInput,
     tx: Prisma.TransactionClient,
   ): Promise<void> {
     await this.vehicleRepository.update(vehicleId, input, tx);
