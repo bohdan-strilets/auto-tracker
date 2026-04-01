@@ -2,8 +2,8 @@ import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { TimelineEventResponseDto } from '@modules/timeline/dto';
-import { IsAdmin } from '@modules/workspace/decorators';
 
+import { IsAdmin } from '@common/auth/decorators';
 import { ApiCreateTimelineEventResponse } from '@common/swagger';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';

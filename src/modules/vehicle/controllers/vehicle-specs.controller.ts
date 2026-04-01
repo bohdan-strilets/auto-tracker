@@ -1,8 +1,7 @@
 import { Body, Controller, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
-import { IsAdmin } from '@modules/workspace/decorators';
-
+import { IsAdmin } from '@common/auth/decorators';
 import { ApiUpdateVehicleSpecsResponse } from '@common/swagger';
 
 import { UpdateVehicleSpecsDto, VehicleSpecsResponseDto } from '../dto';

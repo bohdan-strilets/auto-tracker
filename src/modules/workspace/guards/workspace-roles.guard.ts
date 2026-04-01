@@ -3,9 +3,8 @@ import { Reflector } from '@nestjs/core';
 
 import { WorkspaceRole } from '@prisma/client';
 
+import { WORKSPACE_ROLES_KEY } from '@common/auth/decorators';
 import { InsufficientPermissionsException } from '@common/exceptions';
-
-import { WORKSPACE_ROLES_KEY } from '../decorators';
 
 @Injectable()
 export class WorkspaceRolesGuard implements CanActivate {

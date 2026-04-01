@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUserId } from '@common/auth/decorators';
+import { CurrentUserId, IsAdmin, IsMember, IsOwner } from '@common/auth/decorators';
 import {
   ApiCreateWorkspaceResponse,
   ApiDeleteWorkspaceResponse,
@@ -27,7 +27,6 @@ import {
   ApiUpdateWorkspaceResponse,
 } from '@common/swagger';
 
-import { IsAdmin, IsMember, IsOwner } from '../decorators';
 import { CreateWorkspaceDto, UpdateWorkspaceDto, WorkspaceResponseDto } from '../dto';
 import { WorkspaceService } from '../services';
 

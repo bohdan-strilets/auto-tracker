@@ -16,8 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { IsAdmin, IsMember } from '@modules/workspace/decorators';
-
+import { IsAdmin, IsMember } from '@common/auth/decorators';
 import {
   ApiDeleteTimelineEventResponse,
   ApiGetTimelineEventResponse,

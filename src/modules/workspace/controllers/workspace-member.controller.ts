@@ -17,14 +17,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { CurrentUserId } from '@common/auth/decorators';
+import { CurrentUserId, IsAdmin, IsMember } from '@common/auth/decorators';
 import {
   ApiGetMembersResponse,
   ApiRemoveMemberResponse,
   ApiUpdateMemberRoleResponse,
 } from '@common/swagger';
 
-import { IsAdmin, IsMember } from '../decorators';
 import { UpdateMemberRoleDto, WorkspaceMemberResponseDto } from '../dto';
 import { WorkspaceMemberService, WorkspaceService } from '../services';
 

@@ -17,8 +17,7 @@ import {
   ApiOkResponse,
 } from '@nestjs/swagger';
 
-import { IsAdmin, IsMember } from '@modules/workspace/decorators';
-
+import { IsAdmin, IsMember } from '@common/auth/decorators';
 import { CurrentUserId } from '@common/auth/decorators';
 import {
   ApiCancelInviteResponse,

@@ -1,8 +1,7 @@
 import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { IsAdmin } from '@modules/workspace/decorators';
-
+import { IsAdmin } from '@common/auth/decorators';
 import { ApiCreateTimelineEventResponse } from '@common/swagger';
 
 import { CreateFuelLogDto } from './dto/create-fuel-log.dto';
