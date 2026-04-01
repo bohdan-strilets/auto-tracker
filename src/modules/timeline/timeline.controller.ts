@@ -23,6 +23,7 @@ import {
   ApiGetTimelineResponse,
 } from '@common/swagger';
 
+import { TimelineEventResponseDto, TimelineListResponseDto } from './dto';
 import { TimelineQueryDto } from './dto/timeline-query.dto';
 import { TimelineService } from './timeline.service';
 
@@ -35,7 +36,7 @@ export class TimelineController {
   @Get()
   @IsMember()
   @ApiOperation({ summary: 'Get vehicle timeline' })
-  @ApiOkResponse({ description: 'Paginated timeline events' })
+  @ApiOkResponse({ type: TimelineListResponseDto })
   @ApiGetTimelineResponse()
   findAll(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Query() query: TimelineQueryDto) {
     return this.timelineService.findAll(vehicleId, query);
@@ -44,7 +45,7 @@ export class TimelineController {
   @Get(':eventId')
   @IsMember()
   @ApiOperation({ summary: 'Get timeline event by ID' })
-  @ApiOkResponse({ description: 'Timeline event with details' })
+  @ApiOkResponse({ type: TimelineEventResponseDto })
   @ApiGetTimelineEventResponse()
   findOne(@Param('eventId', ParseUUIDPipe) eventId: string) {
     return this.timelineService.getOne(eventId);

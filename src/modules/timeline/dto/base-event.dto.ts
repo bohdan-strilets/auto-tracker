@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Currency } from '@prisma/client';
 import { Type } from 'class-transformer';
@@ -14,24 +14,24 @@ import {
 } from 'class-validator';
 
 export class BaseEventDto {
-  @ApiProperty({ example: 'Shell station refuel' })
-  @IsString()
+  @ApiPropertyOptional({ example: 'Event title' })
   @IsOptional()
+  @IsString()
   @MaxLength(200)
   declare title?: string;
 
-  @ApiProperty({ example: '2024-01-01T10:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2024-01-01T10:00:00.000Z' })
   @Type(() => Date)
   @IsDate()
   declare eventDate: Date;
 
-  @ApiPropertyOptional({ example: 150000 })
+  @ApiPropertyOptional({ example: 150000, description: 'Vehicle mileage at event time (km)' })
   @IsOptional()
   @IsInt()
   @Min(0)
   declare mileage?: number;
 
-  @ApiPropertyOptional({ example: 250.5 })
+  @ApiPropertyOptional({ example: 250.5, description: 'Total cost of the event' })
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -42,7 +42,7 @@ export class BaseEventDto {
   @IsEnum(Currency)
   declare currency?: Currency;
 
-  @ApiPropertyOptional({ example: 'Regular refuel' })
+  @ApiPropertyOptional({ example: 'Additional notes about the event' })
   @IsOptional()
   @IsString()
   @MaxLength(500)

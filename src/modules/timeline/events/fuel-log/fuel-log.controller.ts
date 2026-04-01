@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swa
 import { IsAdmin } from '@common/auth/decorators';
 import { ApiCreateTimelineEventResponse } from '@common/swagger';
 
+import { FuelEventResponseDto } from './dto';
 import { CreateFuelLogDto } from './dto/create-fuel-log.dto';
 import { FuelLogService } from './fuel-log.service';
 
@@ -16,7 +17,7 @@ export class FuelLogController {
   @Post('fuel')
   @IsAdmin()
   @ApiOperation({ summary: 'Add fuel log (Admin/Owner only)' })
-  @ApiOkResponse({ description: 'Fuel log created' })
+  @ApiOkResponse({ type: FuelEventResponseDto })
   @ApiCreateTimelineEventResponse()
   create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateFuelLogDto) {
     return this.fuelLogService.create(vehicleId, dto);

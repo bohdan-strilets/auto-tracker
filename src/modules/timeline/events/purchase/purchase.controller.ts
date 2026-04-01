@@ -1,11 +1,10 @@
 import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { TimelineEventResponseDto } from '@modules/timeline/dto';
-
 import { IsAdmin } from '@common/auth/decorators';
 import { ApiCreateTimelineEventResponse } from '@common/swagger';
 
+import { PurchaseEventResponseDto } from './dto';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { PurchaseService } from './purchase.service';
 
@@ -18,7 +17,7 @@ export class PurchaseController {
   @Post('purchase')
   @IsAdmin()
   @ApiOperation({ summary: 'Add purchase event (Admin/Owner only)' })
-  @ApiOkResponse({ type: TimelineEventResponseDto })
+  @ApiOkResponse({ type: PurchaseEventResponseDto })
   @ApiCreateTimelineEventResponse()
   create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreatePurchaseDto) {
     return this.purchaseService.create(vehicleId, dto);
