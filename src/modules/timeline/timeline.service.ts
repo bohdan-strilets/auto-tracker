@@ -74,6 +74,6 @@ export class TimelineService {
 
   async delete(eventId: string): Promise<void> {
     await this.getOne(eventId);
-    await this.repository.delete(eventId);
+    await this.repository.softDelete(eventId);
   }
 }

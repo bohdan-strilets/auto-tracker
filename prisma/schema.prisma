@@ -502,6 +502,7 @@ model TimelineEvent {
   trips       Trip?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
 }
 
 model FuelLog {

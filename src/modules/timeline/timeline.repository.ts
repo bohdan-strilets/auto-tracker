@@ -34,6 +34,7 @@ export class TimelineRepository {
 
     const where: Prisma.TimelineEventWhereInput = {
       vehicleId,
+      deletedAt: null,
       ...(type && { type }),
     };
 
@@ -60,8 +61,8 @@ export class TimelineRepository {
   ): Promise<TimelineEventWithDetails | null> {
     const client = tx ?? this.prisma;
 
-    return client.timelineEvent.findUnique({
-      where: { id },
+    return client.timelineEvent.findFirst({
+      where: { id, deletedAt: null },
       include: this.includes,
     });
   }
@@ -70,6 +71,7 @@ export class TimelineRepository {
     const event = await this.prisma.timelineEvent.findFirst({
       where: {
         id: eventId,
+        deletedAt: null,
         vehicle: {
           deletedAt: null,
           workspace: { workspaceMembers: { some: { userId } } },
@@ -88,8 +90,8 @@ export class TimelineRepository {
     return client.timelineEvent.create({ data });
   }
 
-  async delete(id: string, tx?: Prisma.TransactionClient): Promise<TimelineEvent> {
+  async softDelete(id: string, tx?: Prisma.TransactionClient): Promise<TimelineEvent> {
     const client = tx ?? this.prisma;
-    return client.timelineEvent.delete({ where: { id } });
+    return client.timelineEvent.update({ where: { id }, data: { deletedAt: new Date() } });
   }
 }
