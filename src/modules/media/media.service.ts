@@ -86,8 +86,8 @@ export class MediaService {
 
     if (media.userId !== userId) throw new MediaOwnershipException();
 
+    await this.prisma.$transaction((tx) => this.mediaRepository.delete(mediaId, tx));
     await this.cloudinaryService.deleteFile(media.storageKey);
-    await this.mediaRepository.delete(mediaId);
   }
 
   private async verifyEntityOwnership(
