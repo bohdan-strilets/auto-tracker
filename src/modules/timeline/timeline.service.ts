@@ -54,16 +54,24 @@ export class TimelineService {
 
   // ─── Queries ──────────────────────────────────────────────────────────────
 
-  async findAll(vehicleId: string, query: TimelineQueryDto) {
+  async findAll(vehicleId: string, workspaceId: string, query: TimelineQueryDto) {
+    await this.vehicleService.getOne(vehicleId, workspaceId);
+
     const result = await this.repository.findAllByVehicleId(vehicleId, query);
     const { data, total } = result;
 
     return paginate(data, total, query.page, query.limit);
   }
 
-  async getOne(eventId: string): Promise<TimelineEventWithDetails> {
+  async getOne(
+    eventId: string,
+    vehicleId: string,
+    workspaceId: string,
+  ): Promise<TimelineEventWithDetails> {
+    await this.vehicleService.getOne(vehicleId, workspaceId);
+
     const event = await this.repository.findById(eventId);
-    if (!event) throw new TimelineEventNotFoundException();
+    if (!event || event.vehicleId !== vehicleId) throw new TimelineEventNotFoundException();
 
     return event;
   }
@@ -72,8 +80,8 @@ export class TimelineService {
     return this.repository.existsForUser(eventId, userId);
   }
 
-  async delete(eventId: string): Promise<void> {
-    await this.getOne(eventId);
+  async delete(eventId: string, vehicleId: string, workspaceId: string): Promise<void> {
+    await this.getOne(eventId, vehicleId, workspaceId);
     await this.repository.softDelete(eventId);
   }
 }

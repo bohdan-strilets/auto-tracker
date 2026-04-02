@@ -38,8 +38,12 @@ export class TimelineController {
   @ApiOperation({ summary: 'Get vehicle timeline' })
   @ApiOkResponse({ type: TimelineListResponseDto })
   @ApiGetTimelineResponse()
-  findAll(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Query() query: TimelineQueryDto) {
-    return this.timelineService.findAll(vehicleId, query);
+  findAll(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Query() query: TimelineQueryDto,
+  ) {
+    return this.timelineService.findAll(vehicleId, workspaceId, query);
   }
 
   @Get(':eventId')
@@ -47,8 +51,12 @@ export class TimelineController {
   @ApiOperation({ summary: 'Get timeline event by ID' })
   @ApiOkResponse({ type: TimelineEventResponseDto })
   @ApiGetTimelineEventResponse()
-  findOne(@Param('eventId', ParseUUIDPipe) eventId: string) {
-    return this.timelineService.getOne(eventId);
+  findOne(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+  ) {
+    return this.timelineService.getOne(eventId, vehicleId, workspaceId);
   }
 
   @Delete(':eventId')
@@ -57,7 +65,11 @@ export class TimelineController {
   @ApiOperation({ summary: 'Delete timeline event (Admin/Owner only)' })
   @ApiNoContentResponse({ description: 'Event deleted' })
   @ApiDeleteTimelineEventResponse()
-  async delete(@Param('eventId', ParseUUIDPipe) eventId: string) {
-    await this.timelineService.delete(eventId);
+  async delete(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+  ) {
+    await this.timelineService.delete(eventId, vehicleId, workspaceId);
   }
 }
