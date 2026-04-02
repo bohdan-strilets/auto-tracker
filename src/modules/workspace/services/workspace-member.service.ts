@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { PrismaService } from '@db/prisma.service';
 import { Prisma, WorkspaceMember, WorkspaceRole } from '@prisma/client';
 
 import {
@@ -15,7 +16,10 @@ import { WorkspaceMemberRepository } from '../repositories';
 
 @Injectable()
 export class WorkspaceMemberService {
-  constructor(private readonly workspaceMemberRepository: WorkspaceMemberRepository) {}
+  constructor(
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
+    private readonly prisma: PrismaService,
+  ) {}
 
   // ─── Queries ──────────────────────────────────────────────────────────────
 
@@ -52,8 +56,14 @@ export class WorkspaceMemberService {
     const targetMember = await this.getMember(workspaceId, targetUserId);
 
     if (targetMember.role === WorkspaceRole.OWNER) {
-      const ownerCount = await this.workspaceMemberRepository.countOwners(workspaceId);
-      if (ownerCount <= 1) throw new SoleOwnerException();
+      return this.prisma.$transaction(
+        async (tx) => {
+          const ownerCount = await this.workspaceMemberRepository.countOwners(workspaceId, tx);
+          if (ownerCount <= 1) throw new SoleOwnerException();
+          return this.workspaceMemberRepository.updateRole(workspaceId, targetUserId, role, tx);
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
     }
 
     return this.workspaceMemberRepository.updateRole(workspaceId, targetUserId, role);
@@ -64,8 +74,15 @@ export class WorkspaceMemberService {
 
     if (targetUserId === requestingUserId) {
       if (targetMember.role === WorkspaceRole.OWNER) {
-        const ownerCount = await this.workspaceMemberRepository.countOwners(workspaceId);
-        if (ownerCount <= 1) throw new SoleOwnerException();
+        await this.prisma.$transaction(
+          async (tx) => {
+            const ownerCount = await this.workspaceMemberRepository.countOwners(workspaceId, tx);
+            if (ownerCount <= 1) throw new SoleOwnerException();
+            await this.workspaceMemberRepository.delete(workspaceId, targetUserId, tx);
+          },
+          { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+        );
+        return;
       }
       await this.workspaceMemberRepository.delete(workspaceId, targetUserId);
       return;
