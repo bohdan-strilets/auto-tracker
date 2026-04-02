@@ -4,6 +4,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 
 import { JwtAuthGuard } from '@common/auth/guards';
+import { corsSetup } from '@common/cors/cors.setup';
 import { GlobalExceptionFilter } from '@common/exceptions/filter';
 import { createValidationPipe } from '@common/pipes';
 import { setupSwagger } from '@common/swagger';
@@ -23,6 +24,8 @@ async function bootstrap(): Promise<void> {
   const isProduction = config.isProduction;
 
   const reflector = app.get(Reflector);
+
+  corsSetup(app, config);
 
   if (!isProduction) {
     setupSwagger(app);

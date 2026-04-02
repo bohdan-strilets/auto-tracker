@@ -109,4 +109,9 @@ export class ConfigService {
   get cloudinaryApiSecret(): string {
     return this.env.CLOUDINARY_API_SECRET;
   }
+
+  // CORS
+  get frontendUrl(): string {
+    return this.env.FRONTEND_URL;
+  }
 }
