@@ -97,6 +97,11 @@ export class InviteService {
   async acceptInvite(token: string, userId: string): Promise<void> {
     const invite = await this.getValidInvite(token);
 
+    const user = await this.userService.getById(userId);
+    if (normalizeEmail(user.email) !== invite.email) {
+      throw new InviteNotFoundException();
+    }
+
     const existingMember = await this.workspaceMemberService.findMember(invite.workspaceId, userId);
     if (existingMember) throw new WorkspaceMemberAlreadyExistsException();
 
