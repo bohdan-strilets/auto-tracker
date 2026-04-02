@@ -39,7 +39,7 @@ export class InviteRepository {
   ): Promise<Invite[]> {
     const client = tx ?? this.prisma;
     return client.invite.findMany({
-      where: { workspaceId },
+      where: { workspaceId, workspace: { deletedAt: null } },
       orderBy: { createdAt: 'desc' },
     });
   }

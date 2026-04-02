@@ -27,7 +27,7 @@ export class WorkspaceMemberRepository {
   ): Promise<WorkspaceMemberWithUser[]> {
     const client = tx ?? this.prisma;
     return client.workspaceMember.findMany({
-      where: { workspaceId },
+      where: { workspaceId, workspace: { deletedAt: null } },
       include: { user: { select: memberUserSelect } },
       orderBy: { createdAt: 'asc' },
     });
