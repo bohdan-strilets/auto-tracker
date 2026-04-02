@@ -75,7 +75,13 @@ export class MediaService {
     });
   }
 
-  async findByEntity(entityType: EntityType, entityId: string): Promise<MediaWithUrls[]> {
+  async findByEntity(
+    entityType: EntityType,
+    entityId: string,
+    userId: string,
+  ): Promise<MediaWithUrls[]> {
+    await this.verifyEntityOwnership(entityType, entityId, userId);
+
     const mediaList = await this.mediaRepository.findByEntity(entityType, entityId);
     return mediaList.map((media) => this.attachUrls(media));
   }

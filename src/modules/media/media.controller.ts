@@ -80,8 +80,8 @@ export class MediaController {
   @ApiOperation({ summary: 'Get media by entity' })
   @ApiOkResponse({ type: [MediaResponseDto] })
   @ApiGetMediaResponse()
-  findByEntity(@Query() dto: GetMediaQueryDto) {
-    return this.mediaService.findByEntity(dto.entityType, dto.entityId);
+  findByEntity(@Query() dto: GetMediaQueryDto, @CurrentUserId() userId: string) {
+    return this.mediaService.findByEntity(dto.entityType, dto.entityId, userId);
   }
 
   @Delete(':mediaId')
