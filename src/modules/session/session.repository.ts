@@ -29,12 +29,17 @@ export class SessionRepository {
     });
   }
 
-  async updateRefreshToken(id: string, input: UpdateRefreshTokenInput): Promise<Session> {
+  async rotateRefreshToken(
+    id: string,
+    currentHash: string,
+    input: UpdateRefreshTokenInput,
+  ): Promise<boolean> {
     const now = new Date();
-    return this.prisma.session.update({
-      where: { id },
+    const result = await this.prisma.session.updateMany({
+      where: { id, refreshTokenHash: currentHash, status: SessionStatus.ACTIVE },
       data: { ...input, lastActivityAt: now },
     });
+    return result.count > 0;
   }
 
   async updateLastActivity(id: string): Promise<void> {

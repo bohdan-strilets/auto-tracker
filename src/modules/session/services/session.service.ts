@@ -84,10 +84,15 @@ export class SessionService {
     const newRefreshTokenHash = this.jwtTokenService.hashRefreshToken(newRefreshToken);
     const newExpiresAt = this.jwtTokenService.getRefreshTokenExpiresAt();
 
-    await this.sessionRepository.updateRefreshToken(session.id, {
+    const rotated = await this.sessionRepository.rotateRefreshToken(session.id, refreshTokenHash, {
       refreshTokenHash: newRefreshTokenHash,
       expiresAt: newExpiresAt,
     });
+
+    if (!rotated) {
+      await this.sessionRepository.revoke(session.id);
+      throw new SessionInvalidException();
+    }
 
     const accessToken = this.jwtTokenService.generateAccessToken({
       sub: payload.sub,
