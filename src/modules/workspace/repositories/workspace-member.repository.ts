@@ -16,8 +16,8 @@ export class WorkspaceMemberRepository {
     tx?: Prisma.TransactionClient,
   ): Promise<WorkspaceMember | null> {
     const client = tx ?? this.prisma;
-    return client.workspaceMember.findUnique({
-      where: { workspaceId_userId: { workspaceId, userId } },
+    return client.workspaceMember.findFirst({
+      where: { workspaceId, userId, workspace: { deletedAt: null } },
     });
   }
 

@@ -36,7 +36,7 @@ export class WorkspaceService {
 
   async delete(workspaceId: string): Promise<void> {
     await this.findById(workspaceId);
-    await this.workspaceRepository.delete(workspaceId);
+    await this.workspaceRepository.softDelete(workspaceId);
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────

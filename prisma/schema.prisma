@@ -396,6 +396,7 @@ model Workspace {
   workspaceMembers WorkspaceMember[]
   invites          Invite[]
   createdAt        DateTime          @default(now())
+  deletedAt        DateTime?
   vehicles         Vehicle[]
 }
 

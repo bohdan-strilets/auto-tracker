@@ -28,7 +28,7 @@ export class WorkspaceRepository {
 
   async findById(id: string, tx?: Prisma.TransactionClient): Promise<Workspace | null> {
     const client = tx ?? this.prisma;
-    return client.workspace.findUnique({ where: { id } });
+    return client.workspace.findFirst({ where: { id, deletedAt: null } });
   }
 
   async findAllByUserId(
@@ -37,7 +37,7 @@ export class WorkspaceRepository {
   ): Promise<WorkspaceWithMembers[]> {
     const client = tx ?? this.prisma;
     return client.workspace.findMany({
-      where: { workspaceMembers: { some: { userId } } },
+      where: { deletedAt: null, workspaceMembers: { some: { userId } } },
       include: {
         workspaceMembers: { include: { user: { select: memberUserSelect } } },
         _count: { select: { workspaceMembers: true, vehicles: true } },
@@ -51,8 +51,8 @@ export class WorkspaceRepository {
     tx?: Prisma.TransactionClient,
   ): Promise<WorkspaceWithMembers | null> {
     const client = tx ?? this.prisma;
-    return client.workspace.findUnique({
-      where: { id },
+    return client.workspace.findFirst({
+      where: { id, deletedAt: null },
       include: {
         workspaceMembers: { include: { user: { select: memberUserSelect } } },
         _count: { select: { workspaceMembers: true, vehicles: true } },
@@ -69,8 +69,8 @@ export class WorkspaceRepository {
     return client.workspace.update({ where: { id }, data });
   }
 
-  async delete(id: string, tx?: Prisma.TransactionClient): Promise<Workspace> {
+  async softDelete(id: string, tx?: Prisma.TransactionClient): Promise<Workspace> {
     const client = tx ?? this.prisma;
-    return client.workspace.delete({ where: { id } });
+    return client.workspace.update({ where: { id }, data: { deletedAt: new Date() } });
   }
 }
