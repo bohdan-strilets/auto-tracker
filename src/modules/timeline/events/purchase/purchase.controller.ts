@@ -19,7 +19,11 @@ export class PurchaseController {
   @ApiOperation({ summary: 'Add purchase event (Admin/Owner only)' })
   @ApiOkResponse({ type: PurchaseEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreatePurchaseDto) {
-    return this.purchaseService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreatePurchaseDto,
+  ) {
+    return this.purchaseService.create(vehicleId, workspaceId, dto);
   }
 }

@@ -10,9 +10,14 @@ import { CreateExpenseDto } from './dto';
 export class ExpenseService {
   constructor(private readonly timelineService: TimelineService) {}
 
-  async create(vehicleId: string, dto: CreateExpenseDto): Promise<TimelineEvent> {
+  async create(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreateExpenseDto,
+  ): Promise<TimelineEvent> {
     return this.timelineService.createEvent(
       vehicleId,
+      workspaceId,
       {
         type: TimelineEventType.EXPENSE,
         title: dto.title ?? dto.category,

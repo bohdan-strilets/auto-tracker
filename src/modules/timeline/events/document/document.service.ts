@@ -10,9 +10,14 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 export class DocumentService {
   constructor(private readonly timelineService: TimelineService) {}
 
-  async create(vehicleId: string, dto: CreateDocumentDto): Promise<TimelineEvent> {
+  async create(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreateDocumentDto,
+  ): Promise<TimelineEvent> {
     return this.timelineService.createEvent(
       vehicleId,
+      workspaceId,
       {
         type: TimelineEventType.DOCUMENT,
         title: dto.title ?? dto.type,

@@ -16,7 +16,11 @@ export class TireChangeService {
     private readonly tireChangeRepository: TireChangeRepository,
   ) {}
 
-  async install(vehicleId: string, dto: CreateTireChangeDto): Promise<TimelineEvent> {
+  async install(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreateTireChangeDto,
+  ): Promise<TimelineEvent> {
     await this.tireService.findById(dto.installTireId);
 
     if (dto.removeTireId) {
@@ -25,6 +29,7 @@ export class TireChangeService {
 
     return this.timelineService.createEvent(
       vehicleId,
+      workspaceId,
       {
         type: TimelineEventType.TIRE_CHANGE,
         title: dto.title ?? 'Tire change',

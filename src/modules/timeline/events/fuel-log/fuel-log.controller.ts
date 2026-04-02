@@ -19,7 +19,11 @@ export class FuelLogController {
   @ApiOperation({ summary: 'Add fuel log (Admin/Owner only)' })
   @ApiOkResponse({ type: FuelEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateFuelLogDto) {
-    return this.fuelLogService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateFuelLogDto,
+  ) {
+    return this.fuelLogService.create(vehicleId, workspaceId, dto);
   }
 }

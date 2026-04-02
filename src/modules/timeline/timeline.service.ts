@@ -26,9 +26,12 @@ export class TimelineService {
 
   async createEvent(
     vehicleId: string,
+    workspaceId: string,
     eventData: CreateTimelineEventInput,
     createDetails: CreateDetailsFn,
   ): Promise<TimelineEvent> {
+    await this.vehicleService.getOne(vehicleId, workspaceId);
+
     return this.prisma.$transaction(async (tx) => {
       const { mileageSource, ...eventFields } = eventData;
       const input = { ...eventFields, vehicle: { connect: { id: vehicleId } } };

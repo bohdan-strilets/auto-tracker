@@ -22,7 +22,11 @@ export class TireChangeController {
   })
   @ApiOkResponse({ type: TireChangeEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  install(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateTireChangeDto) {
-    return this.tireChangeService.install(vehicleId, dto);
+  install(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateTireChangeDto,
+  ) {
+    return this.tireChangeService.install(vehicleId, workspaceId, dto);
   }
 }

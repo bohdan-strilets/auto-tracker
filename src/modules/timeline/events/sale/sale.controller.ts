@@ -19,7 +19,11 @@ export class SaleController {
   @ApiOperation({ summary: 'Add sale event (Admin/Owner only)' })
   @ApiOkResponse({ type: SaleEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateSaleDto) {
-    return this.saleService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateSaleDto,
+  ) {
+    return this.saleService.create(vehicleId, workspaceId, dto);
   }
 }

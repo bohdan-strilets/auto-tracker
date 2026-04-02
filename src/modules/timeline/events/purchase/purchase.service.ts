@@ -14,9 +14,14 @@ export class PurchaseService {
     private readonly vehicleService: VehicleService,
   ) {}
 
-  async create(vehicleId: string, dto: CreatePurchaseDto): Promise<TimelineEvent> {
+  async create(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreatePurchaseDto,
+  ): Promise<TimelineEvent> {
     return this.timelineService.createEvent(
       vehicleId,
+      workspaceId,
       {
         type: TimelineEventType.PURCHASE,
         title: dto.title ?? 'Vehicle purchase',

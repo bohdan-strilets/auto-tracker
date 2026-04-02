@@ -23,7 +23,11 @@ export class DocumentController {
   })
   @ApiOkResponse({ type: DocumentEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateDocumentDto) {
-    return this.documentService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateDocumentDto,
+  ) {
+    return this.documentService.create(vehicleId, workspaceId, dto);
   }
 }

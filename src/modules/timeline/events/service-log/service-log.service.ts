@@ -10,9 +10,14 @@ import { CreateServiceLogDto } from './dto';
 export class ServiceLogService {
   constructor(private readonly timelineService: TimelineService) {}
 
-  async create(vehicleId: string, dto: CreateServiceLogDto): Promise<TimelineEvent> {
+  async create(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreateServiceLogDto,
+  ): Promise<TimelineEvent> {
     return this.timelineService.createEvent(
       vehicleId,
+      workspaceId,
       {
         type: TimelineEventType.SERVICE,
         title: dto.title ?? `${dto.category} — ${dto.description}`,

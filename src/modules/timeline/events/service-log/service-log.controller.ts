@@ -19,7 +19,11 @@ export class ServiceLogController {
   @ApiOperation({ summary: 'Add service log (Admin/Owner only)' })
   @ApiOkResponse({ type: ServiceEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateServiceLogDto) {
-    return this.serviceLogService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateServiceLogDto,
+  ) {
+    return this.serviceLogService.create(vehicleId, workspaceId, dto);
   }
 }

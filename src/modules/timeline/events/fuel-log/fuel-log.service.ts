@@ -14,7 +14,11 @@ export class FuelLogService {
     private readonly timelineService: TimelineService,
   ) {}
 
-  async create(vehicleId: string, dto: CreateFuelLogDto): Promise<TimelineEvent> {
+  async create(
+    vehicleId: string,
+    workspaceId: string,
+    dto: CreateFuelLogDto,
+  ): Promise<TimelineEvent> {
     const eventData = {
       type: TimelineEventType.FUEL,
       title: dto.title ?? `Refuel — ${dto.liters}L ${dto.fuelType}`,
@@ -43,6 +47,11 @@ export class FuelLogService {
       });
     };
 
-    return this.timelineService.createEvent(vehicleId, eventData, createFuelLogDetails);
+    return this.timelineService.createEvent(
+      vehicleId,
+      workspaceId,
+      eventData,
+      createFuelLogDetails,
+    );
   }
 }

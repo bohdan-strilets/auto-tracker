@@ -19,7 +19,11 @@ export class ExpenseController {
   @ApiOperation({ summary: 'Add expense (Admin/Owner only)' })
   @ApiOkResponse({ type: ExpenseEventResponseDto })
   @ApiCreateTimelineEventResponse()
-  create(@Param('vehicleId', ParseUUIDPipe) vehicleId: string, @Body() dto: CreateExpenseDto) {
-    return this.expenseService.create(vehicleId, dto);
+  create(
+    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @Param('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Body() dto: CreateExpenseDto,
+  ) {
+    return this.expenseService.create(vehicleId, workspaceId, dto);
   }
 }
