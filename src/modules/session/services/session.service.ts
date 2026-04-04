@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { Session } from '@prisma/client';
+import { Prisma, Session } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UserService } from '@modules/user/user.service';
+import { UserRepository } from '@modules/user/repositories';
 
 import {
   SessionExpiredException,
@@ -26,7 +26,7 @@ export class SessionService {
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly jwtTokenService: JwtTokenService,
-    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(
@@ -74,7 +74,8 @@ export class SessionService {
     const isExpired = now > session.expiresAt;
     if (isExpired) throw new SessionExpiredException();
 
-    const user = await this.userService.getById(payload.sub);
+    const user = await this.userRepository.findById(payload.sub);
+    if (!user) throw new SessionNotFoundException();
 
     const newRefreshToken = this.jwtTokenService.generateRefreshToken({
       sub: payload.sub,
@@ -115,8 +116,8 @@ export class SessionService {
     return this.sessionRepository.revoke(sessionId);
   }
 
-  async revokeAll(userId: string): Promise<number> {
-    return this.sessionRepository.revokeAll(userId);
+  async revokeAll(userId: string, tx?: Prisma.TransactionClient): Promise<number> {
+    return this.sessionRepository.revokeAll(userId, tx);
   }
 
   async revokeAllExcept(userId: string, sessionId: string): Promise<void> {

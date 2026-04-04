@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Workspace } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 
 import { WorkspaceNotFoundException } from '@common/exceptions';
 
@@ -50,5 +50,13 @@ export class WorkspaceService {
   async getName(workspaceId: string): Promise<string> {
     const workspace = await this.findById(workspaceId);
     return workspace.name;
+  }
+
+  async findAllOwnedByUser(userId: string, tx?: Prisma.TransactionClient): Promise<Workspace[]> {
+    return this.workspaceRepository.findAllOwnedByUser(userId, tx);
+  }
+
+  async softDeleteAllSoleOwned(userId: string, tx?: Prisma.TransactionClient): Promise<void> {
+    await this.workspaceRepository.softDeleteAllSoleOwned(userId, tx);
   }
 }

@@ -75,4 +75,18 @@ export class WorkspaceMemberRepository {
       data: { workspaceId, userId, role },
     });
   }
+
+  async existsOtherMembers(
+    workspaceId: string,
+    userId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<boolean> {
+    const client = tx ?? this.prisma;
+
+    const count = await client.workspaceMember.count({
+      where: { workspaceId, userId: { not: userId } },
+    });
+
+    return count > 0;
+  }
 }

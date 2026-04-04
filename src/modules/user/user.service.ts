@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@db/prisma.service';
 import { Prisma, User, UserSettings, UserStatus } from '@prisma/client';
 
-import { UserNotFoundException } from '@common/exceptions';
+import { SessionService } from '@modules/session/services';
+import { WorkspaceMemberService, WorkspaceService } from '@modules/workspace/services';
+
+import { SoleOwnerBlocksDeletionException, UserNotFoundException } from '@common/exceptions';
 import { normalizeEmail } from '@common/utils';
 
 import { UserRepository, UserSettingsRepository } from './repositories';
@@ -15,6 +18,9 @@ export class UserService {
     private readonly prisma: PrismaService,
     private readonly userRepository: UserRepository,
     private readonly userSettingsRepository: UserSettingsRepository,
+    private readonly sessionService: SessionService,
+    private readonly workspaceService: WorkspaceService,
+    private readonly workspaceMemberService: WorkspaceMemberService,
   ) {}
 
   async emailExists(email: string): Promise<boolean> {
@@ -88,5 +94,27 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
     if (!user) throw new UserNotFoundException();
     return `${user.firstName} ${user.lastName}`;
+  }
+
+  async softDelete(userId: string): Promise<void> {
+    await this.prisma.$transaction(
+      async (tx) => {
+        const ownedWorkspaces = await this.workspaceService.findAllOwnedByUser(userId, tx);
+
+        for (const workspace of ownedWorkspaces) {
+          const hasOthers = await this.workspaceMemberService.existsOtherMembers(
+            workspace.id,
+            userId,
+            tx,
+          );
+          if (hasOthers) throw new SoleOwnerBlocksDeletionException();
+        }
+
+        await this.workspaceService.softDeleteAllSoleOwned(userId, tx);
+        await this.userRepository.softDelete(userId, tx);
+        await this.sessionService.revokeAll(userId, tx);
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
   }
 }

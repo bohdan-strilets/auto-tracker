@@ -134,4 +134,12 @@ export class WorkspaceMemberService {
     const member = await this.assertMember(workspaceId, userId);
     return member.role;
   }
+
+  async existsOtherMembers(
+    workspaceId: string,
+    userId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<boolean> {
+    return this.workspaceMemberRepository.existsOtherMembers(workspaceId, userId, tx);
+  }
 }

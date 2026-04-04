@@ -64,4 +64,14 @@ export class UserRepository {
     const client = tx ?? this.prisma;
     await client.user.update({ where: { id: userId }, data: { status } });
   }
+
+  async softDelete(userId: string, tx?: Prisma.TransactionClient): Promise<void> {
+    const client = tx ?? this.prisma;
+    const now = new Date();
+
+    await client.user.update({
+      where: { id: userId, deletedAt: null },
+      data: { deletedAt: now },
+    });
+  }
 }

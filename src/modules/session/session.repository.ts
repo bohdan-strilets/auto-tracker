@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@db/prisma.service';
-import { Session, SessionStatus } from '@prisma/client';
+import { Prisma, Session, SessionStatus } from '@prisma/client';
 
 import { CreateSessionInput, UpdateRefreshTokenInput } from './types';
 
@@ -58,10 +58,11 @@ export class SessionRepository {
     });
   }
 
-  async revokeAll(userId: string): Promise<number> {
+  async revokeAll(userId: string, tx?: Prisma.TransactionClient): Promise<number> {
+    const client = tx || this.prisma;
     const now = new Date();
 
-    const result = await this.prisma.session.updateMany({
+    const result = await client.session.updateMany({
       where: { userId, status: SessionStatus.ACTIVE },
       data: { status: SessionStatus.REVOKED, revokedAt: now },
     });

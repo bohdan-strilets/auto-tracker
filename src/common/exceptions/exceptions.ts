@@ -173,6 +173,12 @@ export class WorkspaceMemberAlreadyExistsException extends AppException {
   }
 }
 
+export class SoleOwnerBlocksDeletionException extends AppException {
+  constructor() {
+    super(HttpStatus.CONFLICT, ERROR_CODES.workspace.SOLE_OWNER_BLOCKS_DELETION);
+  }
+}
+
 // Invite
 export class InviteNotFoundException extends AppException {
   constructor() {
