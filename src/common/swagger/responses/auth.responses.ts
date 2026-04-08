@@ -66,3 +66,6 @@ export const ApiConfirmEmailChangeResponse = () =>
     ApiValidationResponse(),
     ApiTooManyRequestsResponse(),
   );
+
+export const ApiMeResponse = () =>
+  applyDecorators(ApiUnauthorizedResponse(), ApiTooManyRequestsResponse());

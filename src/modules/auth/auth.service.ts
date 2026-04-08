@@ -12,6 +12,7 @@ import {
   RefreshTokenPayload,
   RefreshTokenResponse,
 } from '@modules/session/types';
+import { UserResponseDto } from '@modules/user/dto';
 import { CreateUserInput } from '@modules/user/types';
 import { toUserResponseDto } from '@modules/user/user.mapper';
 import { UserService } from '@modules/user/user.service';
@@ -299,5 +300,10 @@ export class AuthService {
     const token = await this.emailTokenService.useEmailChangeToken(rawToken);
     await this.userService.updateEmail(token.userId, token.newEmail);
     await this.sessionService.revokeAll(token.userId);
+  }
+
+  async me(userId: string): Promise<UserResponseDto> {
+    const user = await this.userService.getById(userId);
+    return toUserResponseDto(user);
   }
 }

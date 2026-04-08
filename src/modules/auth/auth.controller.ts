@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCookieAuth,
@@ -11,6 +11,8 @@ import { Throttle } from '@nestjs/throttler';
 
 import { Request, Response } from 'express';
 
+import { UserResponseDto } from '@modules/user/dto';
+
 import { CurrentSessionId, CurrentUserId, Public } from '@common/auth/decorators';
 import { CookieService } from '@common/cookie/cookie.service';
 import { DeviceService } from '@common/device/device.service';
@@ -21,6 +23,7 @@ import {
   ApiForgotPasswordResponse,
   ApiLoginResponse,
   ApiLogoutResponse,
+  ApiMeResponse,
   ApiRefreshResponse,
   ApiRegisterResponse,
   ApiResendVerificationResponse,
@@ -211,5 +214,15 @@ export class AuthController {
   @ApiConfirmEmailChangeResponse()
   async confirmEmailChange(@Body() dto: VerifyEmailDto): Promise<void> {
     await this.authService.confirmEmailChange(dto.token);
+  }
+
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Get current user' })
+  @ApiOkResponse({ type: UserResponseDto })
+  @ApiMeResponse()
+  async me(@CurrentUserId() userId: string): Promise<UserResponseDto> {
+    return this.authService.me(userId);
   }
 }
