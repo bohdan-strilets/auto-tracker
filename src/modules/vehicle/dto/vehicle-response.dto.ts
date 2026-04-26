@@ -44,11 +44,26 @@ export class VehicleResponseDto {
   @ApiPropertyOptional({ example: 'Pearl White' })
   declare color?: string;
 
+  @ApiPropertyOptional({ example: '2024-01-01T00:00:00.000Z' })
+  declare purchaseDate?: Date;
+
+  @ApiPropertyOptional({ example: 25000.0 })
+  declare purchasePrice?: number;
+
   @ApiPropertyOptional({ example: 50000 })
   declare purchaseMileage?: number;
 
   @ApiPropertyOptional({ example: 0 })
   declare currentMileage?: number;
+
+  @ApiPropertyOptional({ example: '2024-06-01T00:00:00.000Z' })
+  declare saleDate?: Date;
+
+  @ApiPropertyOptional({ example: 30000.0 })
+  declare salePrice?: number;
+
+  @ApiPropertyOptional({ example: 85000 })
+  declare saleMileage?: number;
 
   @ApiPropertyOptional({ example: 'Great family car' })
   declare description?: string;
