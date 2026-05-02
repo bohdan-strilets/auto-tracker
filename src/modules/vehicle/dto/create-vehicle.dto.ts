@@ -81,7 +81,7 @@ export class CreateVehicleDto {
   @IsOptional()
   @IsInt()
   @Min(0)
-  declare purchaseMileage?: number;
+  declare currentMileage?: number;
 
   @ApiPropertyOptional({ example: 'Great family car' })
   @IsOptional()
