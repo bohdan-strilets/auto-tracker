@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { DriveType, FuelType, Transmission } from '@prisma/client';
+import { BodyType, DriveType, FuelType, Transmission } from '@prisma/client';
 
 import { VehicleSpecsResponseDto } from './vehicle-specs-response.dto';
 
@@ -31,6 +31,9 @@ export class VehicleResponseDto {
 
   @ApiPropertyOptional({ example: '2AR-FE' })
   declare engineName?: string;
+
+  @ApiPropertyOptional({ enum: BodyType, example: BodyType.SEDAN })
+  declare bodyType?: BodyType;
 
   @ApiProperty({ enum: FuelType, isArray: true, example: [FuelType.PETROL] })
   declare fuelType: FuelType[];

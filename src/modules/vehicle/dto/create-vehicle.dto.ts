@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { DriveType, FuelType, Transmission } from '@prisma/client';
+import { BodyType, DriveType, FuelType, Transmission } from '@prisma/client';
 import {
   IsArray,
   IsEnum,
@@ -57,6 +57,11 @@ export class CreateVehicleDto {
   @IsString()
   @MaxLength(50)
   declare engineName?: string;
+
+  @ApiPropertyOptional({ enum: BodyType, example: BodyType.SEDAN })
+  @IsOptional()
+  @IsEnum(BodyType)
+  declare bodyType?: BodyType;
 
   @ApiProperty({ enum: FuelType, isArray: true, example: [FuelType.PETROL] })
   @IsArray()
